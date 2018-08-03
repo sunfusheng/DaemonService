@@ -22,7 +22,7 @@ public class WorkService1 extends AbsWorkService {
 
     @Override
     public long getHeartBeatMillis() {
-        return 10 * 1000;
+        return 20 * 1000;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.sunfusheng.daemon;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.text.TextUtils;
 
 /**
  * @author sunfusheng on 2018/8/1.
@@ -18,6 +19,9 @@ public class DaemonUtil {
     }
 
     public static boolean isServiceRunning(Context context, String serviceName) {
+        if (TextUtils.isEmpty(serviceName)) {
+            return false;
+        }
         for (ActivityManager.RunningServiceInfo serviceInfo : getActivityManager(context).getRunningServices(50)) {
             if (serviceInfo.service.getClassName().equals(serviceName)) {
                 return true;

@@ -6,11 +6,9 @@ import android.app.job.JobScheduler;
 import android.app.job.JobService;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * @author sunfusheng on 2018/8/1.
@@ -48,22 +46,13 @@ public class JobSchedulerService extends JobService {
     @Override
     public boolean onStartJob(JobParameters params) {
         Log.d(TAG, "onStartJob()");
-        if (!DaemonUtil.isServiceRunning(DaemonHolder.getContext(), "com.sunfusheng.daemon.LocalService")) {
-            Toast.makeText(this, "JobService onStartJob()", Toast.LENGTH_SHORT).show();
-            startService(new Intent(this, AbsWorkService.class));
-        } else {
-            Toast.makeText(this, "Service is running.", Toast.LENGTH_SHORT).show();
-        }
+        DaemonHolder.startService();
         return false;
     }
 
     @Override
     public boolean onStopJob(JobParameters params) {
-        Toast.makeText(this, "JobService onStopJob()", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "onStopJob()");
-        if (!DaemonUtil.isServiceRunning(DaemonHolder.getContext(), "com.sunfusheng.daemon.LocalService")) {
-            startService(new Intent(this, AbsWorkService.class));
-        }
         return false;
     }
 }

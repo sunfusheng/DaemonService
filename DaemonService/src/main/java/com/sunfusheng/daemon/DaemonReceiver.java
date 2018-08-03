@@ -13,10 +13,9 @@ public class DaemonReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent == null) {
-            return;
+        if (intent != null) {
+            Log.e(TAG, "onReceive() action: " + intent.getAction());
         }
-        String action = intent.getAction();
-        Log.d(TAG, "action:" + action);
+        DaemonHolder.startService();
     }
 }

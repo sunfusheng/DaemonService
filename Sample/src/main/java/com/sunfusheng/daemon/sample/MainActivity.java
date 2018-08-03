@@ -27,13 +27,13 @@ public class MainActivity extends AppCompatActivity {
                 DaemonHolder.startService(WorkService1.class);
                 break;
             case R.id.stopService1:
-
+                DaemonHolder.stopService(WorkService1.class);
                 break;
             case R.id.startService2:
                 DaemonHolder.startService(WorkService2.class);
                 break;
             case R.id.stopService2:
-
+                DaemonHolder.stopService(WorkService2.class);
                 break;
         }
     }

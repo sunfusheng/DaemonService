@@ -9,7 +9,6 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -20,7 +19,7 @@ import java.util.TimerTask;
  * @author sunfusheng on 2018/8/1.
  */
 public abstract class AbsWorkService extends Service {
-    private static final String TAG = "---> LocalService";
+    private static final String TAG = "---> AbsWorkService";
 
     private Timer timer = new Timer();
     private TimerTask timerTask = new TimerTask() {
@@ -30,7 +29,7 @@ public abstract class AbsWorkService extends Service {
         }
     };
 
-    private final DaemonAidl aidl = new DaemonAidl.Stub() {
+     private final DaemonAidl aidl = new DaemonAidl.Stub() {
         @Override
         public void startService() throws RemoteException {
             Log.d(TAG, "startService()");
@@ -44,32 +43,30 @@ public abstract class AbsWorkService extends Service {
         }
     };
 
-    private final ServiceConnection serviceConnection = new ServiceConnection() {
+     private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Toast.makeText(AbsWorkService.this, "已绑定 RemoteService", Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "onServiceConnected()");
+            Log.i(TAG, "onServiceConnected() 已绑定");
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            Toast.makeText(AbsWorkService.this, "已断开绑定 RemoteService", Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "onServiceDisconnected()");
-            startRemoteService();
-            bindRemoteService();
+            Log.e(TAG, "onServiceDisconnected() 已解绑");
+//            startDaemonService();
+//            bindDaemonService();
         }
     };
 
-    private void startRemoteService() {
+    private void startDaemonService() {
         try {
             aidl.startService();
         } catch (RemoteException e) {
-            Log.e(TAG, "startLocalService()");
+            Log.e(TAG, "startDaemonService()");
             e.printStackTrace();
         }
     }
 
-    private void bindRemoteService() {
+    private void bindDaemonService() {
         Intent intent = new Intent(this, DaemonService.class);
         bindService(intent, serviceConnection, Context.BIND_IMPORTANT);
     }
@@ -80,8 +77,8 @@ public abstract class AbsWorkService extends Service {
         Log.d(TAG, "onCreate()");
         onStartService();
 
-        startRemoteService();
-        bindRemoteService();
+        startDaemonService();
+        bindDaemonService();
 
         if (getHeartBeatMillis() > 0) {
             timer.schedule(timerTask, getHeartBeatMillis(), getHeartBeatMillis());
