@@ -18,9 +18,8 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".WorkService1"/>
+        <service android:name=".HeartBeatService"/>
 
-        <service android:name=".WorkService2"/>
     </application>
 
 </manifest>

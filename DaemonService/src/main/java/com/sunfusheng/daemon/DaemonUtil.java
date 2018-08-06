@@ -22,7 +22,7 @@ public class DaemonUtil {
         if (TextUtils.isEmpty(serviceName)) {
             return false;
         }
-        for (ActivityManager.RunningServiceInfo serviceInfo : getActivityManager(context).getRunningServices(50)) {
+        for (ActivityManager.RunningServiceInfo serviceInfo : getActivityManager(context).getRunningServices(100)) {
             if (serviceInfo.service.getClassName().equals(serviceName)) {
                 return true;
             }

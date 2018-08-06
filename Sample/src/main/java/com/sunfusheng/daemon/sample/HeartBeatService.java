@@ -2,13 +2,13 @@ package com.sunfusheng.daemon.sample;
 
 import android.util.Log;
 
-import com.sunfusheng.daemon.AbsWorkService;
+import com.sunfusheng.daemon.AbsHeartBeatService;
 
 /**
  * @author sunfusheng on 2018/8/3.
  */
-public class WorkService2 extends AbsWorkService {
-    private static final String TAG = "---> WorkService2";
+public class HeartBeatService extends AbsHeartBeatService {
+    private static final String TAG = "---> HeartBeatService";
 
     @Override
     public void onStartService() {
@@ -22,11 +22,11 @@ public class WorkService2 extends AbsWorkService {
 
     @Override
     public long getHeartBeatMillis() {
-        return 40 * 1000;
+        return 10 * 1000;
     }
 
     @Override
     public void onHeartBeat() {
-        Log.d(TAG, "2、onHeartBeat()");
+        Log.d(TAG, "onHeartBeat()");
     }
 }

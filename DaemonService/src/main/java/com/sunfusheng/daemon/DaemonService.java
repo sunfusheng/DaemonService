@@ -28,13 +28,14 @@ public class DaemonService extends Service {
     private final DaemonAidl aidl = new DaemonAidl.Stub() {
         @Override
         public void startService() throws RemoteException {
-            Log.d(TAG, "startService()");
-            DaemonHolder.startService();
+            Log.d(TAG, "aidl startService()");
         }
 
         @Override
         public void stopService() throws RemoteException {
-            Log.d(TAG, "stopService()");
+            Log.d(TAG, "aidl stopService()");
+//            DaemonService.this.startService(new Intent(DaemonService.this, DaemonHolder.mService));
+//            DaemonService.this.bindService(new Intent(DaemonService.this, DaemonHolder.mService), serviceConnection, Context.BIND_IMPORTANT);
         }
     };
 
@@ -42,11 +43,34 @@ public class DaemonService extends Service {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.i(TAG, "onServiceConnected() 已绑定");
+            try {
+                service.linkToDeath(() -> {
+                    try {
+                        aidl.startService();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }, 1);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            Log.e(TAG, "onServiceDisconnected() 已解定");
+            Log.e(TAG, "onServiceDisconnected() 已解绑");
+            try {
+                aidl.stopService();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+//            startService(new Intent(DaemonService.this, DaemonHolder.mService));
+//            bindService(new Intent(DaemonService.this, DaemonHolder.mService), serviceConnection, Context.BIND_IMPORTANT);
+        }
+
+        @Override
+        public void onBindingDied(ComponentName name) {
+            onServiceDisconnected(name);
         }
     };
 
@@ -54,7 +78,9 @@ public class DaemonService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate()");
-        DaemonHolder.startService();
+
+        startService(new Intent(this, DaemonHolder.mService));
+        bindService(new Intent(this, DaemonHolder.mService), serviceConnection, Context.BIND_IMPORTANT);
 
         listenNetworkConnectivity();
         screenBroadcastReceiver.registerScreenBroadcastReceiver(this);
@@ -78,7 +104,8 @@ public class DaemonService extends Service {
         super.onDestroy();
         Log.e(TAG, "onDestroy()");
         unbindService(serviceConnection);
-        DaemonHolder.restartService(getApplicationContext(), getClass());
+
+//        DaemonHolder.restartService(getApplicationContext(), getClass());
         screenBroadcastReceiver.unregisterScreenBroadcastReceiver(this);
     }
 

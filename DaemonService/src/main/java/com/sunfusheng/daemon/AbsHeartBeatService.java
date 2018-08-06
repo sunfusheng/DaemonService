@@ -18,8 +18,8 @@ import java.util.TimerTask;
  *
  * @author sunfusheng on 2018/8/1.
  */
-public abstract class AbsWorkService extends Service {
-    private static final String TAG = "---> AbsWorkService";
+public abstract class AbsHeartBeatService extends Service {
+    private static final String TAG = "---> HeartBeatService";
 
     private Timer timer = new Timer();
     private TimerTask timerTask = new TimerTask() {
@@ -29,47 +29,54 @@ public abstract class AbsWorkService extends Service {
         }
     };
 
-     private final DaemonAidl aidl = new DaemonAidl.Stub() {
+    private final DaemonAidl aidl = new DaemonAidl.Stub() {
         @Override
         public void startService() throws RemoteException {
-            Log.d(TAG, "startService()");
-            AbsWorkService.this.startService(new Intent(AbsWorkService.this, DaemonService.class));
+            Log.d(TAG, "aidl startService()");
         }
 
         @Override
         public void stopService() throws RemoteException {
-            Log.d(TAG, "stopService()");
-            AbsWorkService.this.stopService(new Intent(AbsWorkService.this, DaemonService.class));
+            Log.d(TAG, "aidl stopService()");
+//            AbsHeartBeatService.this.startService(new Intent(AbsHeartBeatService.this, DaemonService.class));
+//            AbsHeartBeatService.this.bindService(new Intent(AbsHeartBeatService.this, DaemonService.class), serviceConnection, Context.BIND_IMPORTANT);
         }
     };
 
-     private final ServiceConnection serviceConnection = new ServiceConnection() {
+    private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.i(TAG, "onServiceConnected() 已绑定");
+            try {
+                service.linkToDeath(() -> {
+                    try {
+                        aidl.startService();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }, 1);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Log.e(TAG, "onServiceDisconnected() 已解绑");
-//            startDaemonService();
-//            bindDaemonService();
+            try {
+                aidl.stopService();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+//            startService(new Intent(AbsHeartBeatService.this, DaemonService.class));
+//            bindService(new Intent(AbsHeartBeatService.this, DaemonService.class), serviceConnection, Context.BIND_IMPORTANT);
+        }
+
+        @Override
+        public void onBindingDied(ComponentName name) {
+            onServiceDisconnected(name);
         }
     };
-
-    private void startDaemonService() {
-        try {
-            aidl.startService();
-        } catch (RemoteException e) {
-            Log.e(TAG, "startDaemonService()");
-            e.printStackTrace();
-        }
-    }
-
-    private void bindDaemonService() {
-        Intent intent = new Intent(this, DaemonService.class);
-        bindService(intent, serviceConnection, Context.BIND_IMPORTANT);
-    }
 
     @Override
     public void onCreate() {
@@ -77,8 +84,8 @@ public abstract class AbsWorkService extends Service {
         Log.d(TAG, "onCreate()");
         onStartService();
 
-        startDaemonService();
-        bindDaemonService();
+        startService(new Intent(this, DaemonService.class));
+        bindService(new Intent(this, DaemonService.class), serviceConnection, Context.BIND_IMPORTANT);
 
         if (getHeartBeatMillis() > 0) {
             timer.schedule(timerTask, getHeartBeatMillis(), getHeartBeatMillis());
@@ -103,8 +110,9 @@ public abstract class AbsWorkService extends Service {
         super.onDestroy();
         Log.e(TAG, "onDestroy()");
         onStopService();
+
         unbindService(serviceConnection);
-        DaemonHolder.restartService(getApplicationContext(), getClass());
+//        DaemonHolder.restartService(getApplicationContext(), getClass());
 
         timer.cancel();
         timerTask.cancel();
