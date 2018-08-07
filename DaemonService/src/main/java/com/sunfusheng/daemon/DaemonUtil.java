@@ -2,6 +2,7 @@ package com.sunfusheng.daemon;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.os.Build;
 import android.text.TextUtils;
 
 /**
@@ -9,6 +10,7 @@ import android.text.TextUtils;
  */
 public class DaemonUtil {
     private static final long INTERVAL_TIME = 10 * 1000;
+    private static final String BRAND = Build.BRAND.toLowerCase();
     private static ActivityManager activityManager;
 
     public static ActivityManager getActivityManager(Context context) {
@@ -58,5 +60,21 @@ public class DaemonUtil {
 
     public static long getIntervalTime() {
         return INTERVAL_TIME;
+    }
+
+    public static boolean isXiaomi() {
+        return Build.MANUFACTURER.toLowerCase().equals("xiaomi");
+    }
+
+    public static boolean isVivo() {
+        return BRAND.contains("vivo") || BRAND.contains("bbk");
+    }
+
+    public static boolean isOppo() {
+        return BRAND.contains("oppo");
+    }
+
+    public static boolean isHuawei() {
+        return BRAND.contains("huawei") || BRAND.contains("honor");
     }
 }

@@ -34,8 +34,6 @@ public class DaemonService extends Service {
         @Override
         public void stopService() throws RemoteException {
             Log.d(TAG, "aidl stopService()");
-//            DaemonService.this.startService(new Intent(DaemonService.this, DaemonHolder.mService));
-//            DaemonService.this.bindService(new Intent(DaemonService.this, DaemonHolder.mService), serviceConnection, Context.BIND_IMPORTANT);
         }
     };
 
@@ -64,8 +62,7 @@ public class DaemonService extends Service {
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-//            startService(new Intent(DaemonService.this, DaemonHolder.mService));
-//            bindService(new Intent(DaemonService.this, DaemonHolder.mService), serviceConnection, Context.BIND_IMPORTANT);
+            startBindService();
         }
 
         @Override
@@ -74,14 +71,22 @@ public class DaemonService extends Service {
         }
     };
 
+    private void startBindService() {
+        try {
+            if (DaemonHolder.mService != null) {
+                startService(new Intent(this, DaemonHolder.mService));
+                bindService(new Intent(this, DaemonHolder.mService), serviceConnection, Context.BIND_IMPORTANT);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate()");
-
-        startService(new Intent(this, DaemonHolder.mService));
-        bindService(new Intent(this, DaemonHolder.mService), serviceConnection, Context.BIND_IMPORTANT);
-
+        startBindService();
         listenNetworkConnectivity();
         screenBroadcastReceiver.registerScreenBroadcastReceiver(this);
     }
@@ -105,7 +110,7 @@ public class DaemonService extends Service {
         Log.e(TAG, "onDestroy()");
         unbindService(serviceConnection);
 
-//        DaemonHolder.restartService(getApplicationContext(), getClass());
+        DaemonHolder.restartService(getApplicationContext(), getClass());
         screenBroadcastReceiver.unregisterScreenBroadcastReceiver(this);
     }
 
