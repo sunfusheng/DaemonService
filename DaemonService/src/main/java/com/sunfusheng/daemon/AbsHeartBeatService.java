@@ -38,6 +38,7 @@ public abstract class AbsHeartBeatService extends Service {
         @Override
         public void stopService() throws RemoteException {
             Log.d(TAG, "aidl stopService()");
+            startBindService();
         }
     };
 
@@ -66,7 +67,6 @@ public abstract class AbsHeartBeatService extends Service {
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-            startBindService();
         }
 
         @Override
@@ -91,7 +91,7 @@ public abstract class AbsHeartBeatService extends Service {
         onStartService();
         startBindService();
         if (getHeartBeatMillis() > 0) {
-            timer.schedule(timerTask, getHeartBeatMillis(), getHeartBeatMillis());
+            timer.schedule(timerTask, 0, getHeartBeatMillis());
         }
     }
 
@@ -115,7 +115,7 @@ public abstract class AbsHeartBeatService extends Service {
         onStopService();
 
         unbindService(serviceConnection);
-        DaemonHolder.restartService(getApplicationContext(), getClass());
+        DaemonHolder.restartService(getApplicationContext(), DaemonHolder.mService);
 
         timer.cancel();
         timerTask.cancel();

@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.startService:
-                DaemonHolder.startService(HeartBeatService.class);
+                DaemonHolder.startService();
                 break;
             case R.id.stopService:
                 DaemonHolder.stopService();

@@ -9,7 +9,7 @@ import android.text.TextUtils;
  * @author sunfusheng on 2018/8/1.
  */
 public class DaemonUtil {
-    private static final long INTERVAL_TIME = 10 * 1000;
+    private static final long INTERVAL_TIME = 30 * 1000;
     private static final String BRAND = Build.BRAND.toLowerCase();
     private static ActivityManager activityManager;
 

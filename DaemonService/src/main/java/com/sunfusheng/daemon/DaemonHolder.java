@@ -4,8 +4,10 @@ import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.SystemClock;
 import android.util.Log;
@@ -27,14 +29,7 @@ public class DaemonHolder {
         mContext = context;
         mService = service;
         mServiceCanonicalName = service.getCanonicalName();
-    }
-
-    public static void startService(Class<? extends Service> service) {
-        if (service != null) {
-            mService = service;
-            mServiceCanonicalName = service.getCanonicalName();
-            startService();
-        }
+        startService();
     }
 
     public static void startService() {
@@ -48,7 +43,11 @@ public class DaemonHolder {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !DaemonUtil.isXiaomi()) {
                 JobSchedulerService.scheduleJobService(mContext);
+                Log.d(TAG, "启动 JobService");
             }
+
+            mContext.getPackageManager().setComponentEnabledSetting(new ComponentName(mContext.getPackageName(), mService.getName()),
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
         }
     }
 
@@ -64,7 +63,7 @@ public class DaemonHolder {
     }
 
     public static void restartService(Context context, Class<?> cls) {
-        Log.d(TAG, "重启服务");
+        Log.d(TAG, "重启服务 AlarmManager");
         Intent intent = new Intent(context, cls);
         intent.setPackage(context.getPackageName());
         PendingIntent pendingIntent = PendingIntent.getService(context, 1, intent, PendingIntent.FLAG_ONE_SHOT);

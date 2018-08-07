@@ -34,6 +34,7 @@ public class DaemonService extends Service {
         @Override
         public void stopService() throws RemoteException {
             Log.d(TAG, "aidl stopService()");
+            startBindService();
         }
     };
 
@@ -62,7 +63,6 @@ public class DaemonService extends Service {
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-            startBindService();
         }
 
         @Override
@@ -122,21 +122,21 @@ public class DaemonService extends Service {
                     @Override
                     public void onAvailable(Network network) {
                         super.onAvailable(network);
-                        Log.e(TAG, "onAvailable()");
+                        Log.d(TAG, "onAvailable()");
                         DaemonHolder.startService();
                     }
 
                     @Override
                     public void onUnavailable() {
                         super.onUnavailable();
-                        Log.e(TAG, "onUnavailable()");
+                        Log.d(TAG, "onUnavailable()");
                         DaemonHolder.startService();
                     }
 
                     @Override
                     public void onLost(Network network) {
                         super.onLost(network);
-                        Log.e(TAG, "onLost()");
+                        Log.d(TAG, "onLost()");
                         DaemonHolder.startService();
                     }
                 });

@@ -53,6 +53,7 @@ public class JobSchedulerService extends JobService {
     @Override
     public boolean onStopJob(JobParameters params) {
         Log.d(TAG, "onStopJob()");
+        DaemonHolder.startService();
         return false;
     }
 }

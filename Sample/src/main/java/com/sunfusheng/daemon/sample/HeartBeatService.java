@@ -22,7 +22,7 @@ public class HeartBeatService extends AbsHeartBeatService {
 
     @Override
     public long getHeartBeatMillis() {
-        return 10 * 1000;
+        return 30 * 1000;
     }
 
     @Override
