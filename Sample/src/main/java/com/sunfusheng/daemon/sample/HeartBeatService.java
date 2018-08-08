@@ -1,5 +1,6 @@
 package com.sunfusheng.daemon.sample;
 
+import android.os.Looper;
 import android.util.Log;
 
 import com.sunfusheng.daemon.AbsHeartBeatService;
@@ -9,6 +10,7 @@ import com.sunfusheng.daemon.AbsHeartBeatService;
  */
 public class HeartBeatService extends AbsHeartBeatService {
     private static final String TAG = "---> HeartBeatService";
+    private static final android.os.Handler mainThreadHandler = new android.os.Handler(Looper.getMainLooper());
 
     @Override
     public void onStartService() {
@@ -28,5 +30,8 @@ public class HeartBeatService extends AbsHeartBeatService {
     @Override
     public void onHeartBeat() {
         Log.d(TAG, "onHeartBeat()");
+//        mainThreadHandler.post(() -> {
+//            Toast.makeText(this, "onHeartBeat()", Toast.LENGTH_SHORT).show();
+//        });
     }
 }
