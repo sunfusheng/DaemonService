@@ -23,6 +23,11 @@ public class HeartBeatService extends AbsHeartBeatService {
     }
 
     @Override
+    public long getDelayExecutedMillis() {
+        return 0;
+    }
+
+    @Override
     public long getHeartBeatMillis() {
         return 30 * 1000;
     }

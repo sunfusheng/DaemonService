@@ -92,7 +92,7 @@ public abstract class AbsHeartBeatService extends Service {
         onStartService();
         startBindService();
         if (getHeartBeatMillis() > 0) {
-            timer.schedule(timerTask, 0, getHeartBeatMillis());
+            timer.schedule(timerTask, getDelayExecutedMillis(), getHeartBeatMillis());
         }
     }
 
@@ -130,6 +130,8 @@ public abstract class AbsHeartBeatService extends Service {
     public abstract void onStartService();
 
     public abstract void onStopService();
+
+    public abstract long getDelayExecutedMillis();
 
     public abstract long getHeartBeatMillis();
 
