@@ -30,8 +30,5 @@ public class HeartBeatService extends AbsHeartBeatService {
     @Override
     public void onHeartBeat() {
         Log.d(TAG, "onHeartBeat()");
-//        mainThreadHandler.post(() -> {
-//            Toast.makeText(this, "onHeartBeat()", Toast.LENGTH_SHORT).show();
-//        });
     }
 }

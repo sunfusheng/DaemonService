@@ -34,7 +34,6 @@ public class DaemonService extends Service {
         @Override
         public void stopService() throws RemoteException {
             Log.e(TAG, "aidl stopService()");
-            startBindService();
         }
     };
 
@@ -44,8 +43,10 @@ public class DaemonService extends Service {
             Log.d(TAG, "onServiceConnected() 已绑定");
             try {
                 service.linkToDeath(() -> {
+                    Log.e(TAG, "onServiceConnected() linkToDeath");
                     try {
                         aidl.startService();
+                        startBindService();
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
